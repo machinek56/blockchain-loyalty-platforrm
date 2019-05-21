@@ -10,12 +10,8 @@ const store = new Vuex.Store({
     user: {}
   },
 
-  getters: {
-
-  },
-
   mutations: {
-
+    setUser: (state, payload) => state.user = payload
   },
 
   actions: {
@@ -31,17 +27,17 @@ const store = new Vuex.Store({
         data.fullName,
         data.phone
       ).call()
-      console.log(res)
       return res
     },
 
-    async getUser({ state }, address) {
+    async getUser({ commit }, address) {
       const contract = new web3.eth.Contract(USER.ABI, USER.ADDRESS)
-      // const res = await contract.methods.getUser(address).call()
-      const res = contract.methods.getUser(address).call((err, result) => { console.log(result) })
-      state.user = res
+      const res = await contract.methods.getUser(address).call()
+      // const res = contract.methods.getUser(address).call((err, result) => { console.log(result) })
+      commit('setUser', res)
     }
   }
 })
 
 export default store
+

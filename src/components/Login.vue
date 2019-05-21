@@ -149,7 +149,7 @@
 
       login() {
         if (web3.eth.accounts) {
-          this.$router.push('/wallet')
+          this.$router.push('/account')
         }
       },
 

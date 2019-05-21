@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '@/components/Login'
-import Wallet from '@/components/Wallet'
+import Account from '@/components/Account'
 
 Vue.use(VueRouter)
 
@@ -12,12 +12,8 @@ const router = new VueRouter({
       component: Login
     },
     {
-      path: '/wallet',
-      component: Wallet
-    },
-    {
-      path: '*',
-      component: Login
+      path: '/account',
+      component: Account
     }
   ]
 })

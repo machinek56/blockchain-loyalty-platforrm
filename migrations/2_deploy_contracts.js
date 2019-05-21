@@ -1,10 +1,10 @@
 const CustomToken = artifacts.require("CustomToken");
-const Users = artifacts.require("Users");
+const LoyaltyProgram = artifacts.require("LoyaltyProgram");
 
 module.exports = function(deployer) {
   deployer.deploy(CustomToken);
 };
 
 module.exports = function(deployer) {
-  deployer.deploy(Users);
+  deployer.deploy(LoyaltyProgram);
 };
