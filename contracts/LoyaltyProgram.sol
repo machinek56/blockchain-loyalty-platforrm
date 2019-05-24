@@ -1,24 +1,6 @@
 pragma solidity ^0.5.2;
 
-contract Ownable {
-
-    address owner;
-
-    constructor () public {
-        owner = msg.sender;
-    }
-
-    modifier onlyOwner() {
-        require(msg.sender == owner);
-        _;
-    }
-
-    function transferOwnership(address newOwner) public onlyOwner {
-        owner = newOwner;
-    }
-}
-
-contract LoyaltyProgram is Ownable {
+contract LoyaltyProgram {
 
     // model a member
     struct Member {
@@ -129,24 +111,32 @@ contract LoyaltyProgram is Ownable {
         return transactionsInfo.length;
     }
 
+    function getTransactionAt(uint _index) public view returns (uint, TransactionType, address, address) {
+        return (
+            transactionsInfo[_index].points,
+            transactionsInfo[_index].transactionType,
+            transactionsInfo[_index].memberAddress,
+            transactionsInfo[_index].partnerAddress
+        );
+    }
+
     //get length of partnersInfo array
     function partnersInfoLength() public view returns(uint256) {
         return partnersInfo.length;
     }
 
     // get partner index of partnersInfo array
-    function getPartnerAt(uint _index) public view returns(string memory) {
-        return partnersInfo[_index].name;
+    function getPartnerAt(uint _index) public view returns(string memory, address) {
+        return (partnersInfo[_index].name, partnersInfo[_index].partnerAddress);
     }
 
     // get member at msg.sender of members
-    function getMemberAt() public view onlyOwner returns (string memory, string memory, uint) {
+    function getMemberAt() public view returns (string memory, string memory, uint256) {
         string memory name = members[msg.sender].fullName;
         string memory phone = members[msg.sender].phone;
-        uint points = members[msg.sender].points;
+        uint256 points = members[msg.sender].points;
 
         return (name, phone, points);
     }
-
 }
 

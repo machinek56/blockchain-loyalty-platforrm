@@ -36,38 +36,20 @@
 
             <b-tabs content-class="mt-3" >
                 <b-tab title="Перевести средства" active>
-                    <div class="wallet-send">
-                        <h2>Перевести средства</h2>
-
-                        <b-form-group label="Выберите токен">
-                            <b-form-select v-model="selectedToken" :options="tokens"></b-form-select>
-                        </b-form-group>
-
-                        <b-form-group
-                                id="fieldset-1"
-                                label="Адрес получателя"
-                                label-for="input-1">
-                            <b-form-input id="input-1" v-model="addressTo" trim></b-form-input>
-                        </b-form-group>
-
-                        <b-form-group
-                                label="Сумма"
-                                label-for="input-1">
-                            <b-form-input v-model="amount" placeholder="0.0"></b-form-input>
-                        </b-form-group>
-
-                        <b-button @click="handleSendTransaction">Отправить</b-button>
-                        <b-spinner label="Spinning" class="ml-2" v-if="isLoading"></b-spinner>
-                    </div>
+                    <transfer-funds :address="address"></transfer-funds>
 
                 </b-tab>
 
-                <b-tab title="Заработать токены" v-if="!isPartner">
+                <b-tab title="Заработать баллы" v-if="!isPartner">
                     <div class="wallet-send">
-                        <h4>Заработать токены через покупки</h4>
+                        <h4>Заработать баллы через покупки</h4>
 
                         <b-form-group label="Выберите партнера">
-                            <b-form-select v-model="selectedPartner" :options="partners"></b-form-select>
+                            <b-form-select v-model="selectedPartner"
+                                           :options="partners"
+                                           text-field="name"
+                                           value-field="address">
+                            </b-form-select>
                         </b-form-group>
 
                         <h5>Выберите товар</h5>
@@ -88,14 +70,17 @@
                     </div>
                 </b-tab>
 
-                <b-tab title="Потратить токены" v-if="!isPartner">
+                <b-tab title="Потратить баллы" v-if="!isPartner">
                     <div class="wallet-send">
-                        <h4>Потратить токены через покупки</h4>
+                        <h4>Потратить баллы через покупки</h4>
 
                         <b-form-group label="Выберите партнера">
-                            <b-form-select v-model="selectedPartner" :options="partners"></b-form-select>
+                            <b-form-select v-model="selectedPartner"
+                                           :options="partners"
+                                           text-field="name"
+                                           value-field="address">
+                            </b-form-select>
                         </b-form-group>
-
                         <h5>Выберите товар</h5>
                         <div class="mb-2">
                             <b-button variant="outline-secondary"
@@ -118,7 +103,22 @@
                     <div style="max-width: 800px;">
                         <h2>Транзакции</h2>
 
-                        <b-table striped hover small responsive :items="transactions"></b-table>
+                        <table class="table table-hover">
+                            <thead>
+                                <th>Сумма</th>
+                                <th>Тип</th>
+                                <th>Адрес клиента</th>
+                                <th>Адрес партнера</th>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(transaction, key) in transactions" :key="key">
+                                    <td>{{ transaction.points }}</td>
+                                    <td>{{ transaction.trasactionType }}</td>
+                                    <td>{{ transaction.memberAddress }}</td>
+                                    <td>{{ transaction.partnerAddress }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
                 </b-tab>
@@ -135,30 +135,27 @@
 
 <script>
   import web3 from '../web3'
-  import { mapState, mapActions, mapGetters } from 'vuex'
+  import { mapActions, mapGetters, mapState } from 'vuex'
   import { TOKEN } from '@/config'
+  import TransferFunds from './TransferFunds'
+  import { userType } from '@/constants'
 
   export default {
     name: 'Account',
 
+    components: {
+      TransferFunds
+    },
+
     data: () => ({
       address: '',
       balance: '',
-      selectedToken: '',
-      tokens: ['ETH'],
-      addressTo: '',
-      amount: '',
       isLoading: false,
       showTransactions: false,
-      token: {
-        name: '',
-        symbol: '',
-        decimals: ''
-      },
       tokenName: '',
       tokenSymbol: 'ETH',
       transactions: [],
-      contract: {},
+      contractTransactions: [],
       partners: [],
       selectedPartner: null
     }),
@@ -168,12 +165,13 @@
       ...mapGetters(['userType']),
 
       isPartner () {
-        return this.userType === 'PARTNER'
+        return this.userType === userType.PARTNER
       }
     },
 
     methods: {
-      ...mapActions(['sendTransaction', 'getClientInfo', 'getPartnerList', 'earnPoints', 'usePoints']),
+      ...mapActions(['sendTransaction', 'getClientInfo', 'getPartnerList',
+        'earnPoints', 'usePoints', 'getTransactionsInfo']),
 
       async getBalance() {
        let balance = await web3.eth.getBalance(this.address);
@@ -181,29 +179,21 @@
       },
 
       async getToken() {
-        // let contract = new web3.eth.Contract(TOKEN.ABI, TOKEN.ADDRESS)
-        // const res = await contract.methods.mint('0x333dcd15AbD50180C56a618Ac240250bB4a2eDA8', 10000).call()
-        // console.log(res)
-        // this.tokenName = await contract.methods.name().call()
-        // this.tokenSymbol = await contract.methods.name().call()
-      },
-
-      async handleSendTransaction() {
-        this.isLoading = true
-        const transaction =  {
-          to: this.addressTo,
-          from: this.address,
-          value: web3.utils.toWei(this.amount, 'ether')
-        }
-
-        await this.sendTransaction(transaction)
-
-        this.isLoading = false
-        this.getBalance()
+        let contract = new web3.eth.Contract(TOKEN.ABI, TOKEN.ADDRESS)
+        const res = await contract.methods.mint(this.address, 10000).call()
+        console.log(res)
+        this.tokenName = await contract.methods.name().call()
+        this.tokenSymbol = await contract.methods.symbol().call()
       },
 
       async getPartners() {
-        this.partners = await this.getPartnerList()
+        const partners = await this.getPartnerList()
+        this.partners = partners.map(partner => {
+          return {
+            name: partner[0],
+            address: partner[1]
+          }
+        })
       },
 
       getTransactions() {
@@ -232,6 +222,7 @@
           partnerAddress: this.selectedPartner
         }
         await this.earnPoints(data)
+        await this.getClientInfo()
       },
 
       async buyProductForToken(points) {
@@ -240,6 +231,10 @@
           partnerAddress: this.selectedPartner
         }
         await this.usePoints(data)
+      },
+
+      async getTransactionInfo() {
+        this.contractTransactions = await this.getTransactionsInfo()
       }
     },
 
@@ -247,10 +242,12 @@
       this.address = sessionStorage.getItem('account')
       this.getBalance()
       this.getToken()
-      this.getTransactions()
       this.getPartners()
       if (!this.isPartner) {
         this.getClientInfo()
+        this.getTransactions()
+      } else {
+        this.getTransactionInfo()
       }
     }
   }

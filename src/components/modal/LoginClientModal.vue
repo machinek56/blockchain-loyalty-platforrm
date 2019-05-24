@@ -39,6 +39,7 @@
 
 <script>
   import { mapActions, mapMutations } from 'vuex'
+  import { userType } from '@/constants'
 
   export default {
     name: 'LoginClientModal',
@@ -69,7 +70,7 @@
       },
 
       login () {
-        this.setUserType('CLIENT')
+        this.setUserType(userType.CLIENT)
         this.$router.push('/account')
       }
     }

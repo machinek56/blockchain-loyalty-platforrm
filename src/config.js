@@ -1,6 +1,6 @@
 export const TOKEN  =  {
-  ADDRESS: '0x62C430020cDfb9F73348bAba35cA1DeD29087D60',
-  ABI:  [
+  ADDRESS: '0x3BC49B8682b87042eD31d85733d523EADC763394',
+  ABI: [
     {
       "constant": true,
       "inputs": [],
@@ -145,10 +145,6 @@ export const TOKEN  =  {
         {
           "name": "owner",
           "type": "address"
-        },
-        {
-          "name": "value",
-          "type": "uint256"
         }
       ],
       "name": "balanceOf",
@@ -164,12 +160,7 @@ export const TOKEN  =  {
     },
     {
       "constant": true,
-      "inputs": [
-        {
-          "name": "owner",
-          "type": "address"
-        }
-      ],
+      "inputs": [],
       "name": "symbol",
       "outputs": [
         {
@@ -190,24 +181,14 @@ export const TOKEN  =  {
         }
       ],
       "name": "addMinter",
-      "outputs": [
-        {
-          "name": "",
-          "type": "string"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "constant": false,
-      "inputs": [
-        {
-          "name": "account",
-          "type": "address"
-        }
-      ],
+      "inputs": [],
       "name": "renounceMinter",
       "outputs": [],
       "payable": false,
@@ -266,10 +247,6 @@ export const TOKEN  =  {
         {
           "name": "account",
           "type": "address"
-        },
-        {
-          "name": "value",
-          "type": "uint256"
         }
       ],
       "name": "isMinter",
@@ -313,23 +290,10 @@ export const TOKEN  =  {
           "indexed": true,
           "name": "account",
           "type": "address"
-        },
-        {
-          "name": "spender",
-          "type": "address"
         }
       ],
       "name": "MinterAdded",
-      "type": "event",
-      "constant": true,
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view"
+      "type": "event"
     },
     {
       "anonymous": false,
@@ -386,34 +350,12 @@ export const TOKEN  =  {
       ],
       "name": "Approval",
       "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "name": "spender",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "value",
-          "type": "uint256"
-        }
-      ],
-      "name": "Approval",
-      "type": "event"
     }
   ]
 }
 
 export const LOYALTY_PROGRAM = {
-  ADDRESS: '0xF7cae72e34e81390073f98E436BdC1111096DBd6',
+  ADDRESS: '0xd94ae1a70c1c908B416C442EF3e08cB4CB7231b2',
   ABI: [
     {
       "constant": true,
@@ -539,24 +481,6 @@ export const LOYALTY_PROGRAM = {
       "constant": false,
       "inputs": [
         {
-          "name": "newOwner",
-          "type": "address"
-        },
-        {
-          "name": "_phone",
-          "type": "string"
-        }
-      ],
-      "name": "transferOwnership",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
           "name": "_fullName",
           "type": "string"
         },
@@ -577,10 +501,6 @@ export const LOYALTY_PROGRAM = {
         {
           "name": "_name",
           "type": "string"
-        },
-        {
-          "name": "_partnerAddress",
-          "type": "address"
         }
       ],
       "name": "registerPartner",
@@ -620,12 +540,7 @@ export const LOYALTY_PROGRAM = {
         }
       ],
       "name": "usePoints",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -652,11 +567,46 @@ export const LOYALTY_PROGRAM = {
           "type": "uint256"
         }
       ],
+      "name": "getTransactionAt",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "name": "",
+          "type": "uint8"
+        },
+        {
+          "name": "",
+          "type": "address"
+        },
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
       "name": "partnersInfoLength",
       "outputs": [
         {
           "name": "",
           "type": "uint256"
+        },
+        {
+          "name": "",
+          "type": "address"
         }
       ],
       "payable": false,
@@ -676,6 +626,14 @@ export const LOYALTY_PROGRAM = {
         {
           "name": "",
           "type": "string"
+        },
+        {
+          "name": "",
+          "type": "address"
+        },
+        {
+          "name": "",
+          "type": "uint256"
         }
       ],
       "payable": false,
