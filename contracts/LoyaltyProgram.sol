@@ -1,6 +1,24 @@
 pragma solidity ^0.5.2;
 
-contract LoyaltyProgram {
+contract Ownable {
+
+    address owner;
+
+    constructor () public {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+
+    function transferOwnership(address newOwner) public onlyOwner {
+        owner = newOwner;
+    }
+}
+
+contract LoyaltyProgram is Ownable {
 
     // model a member
     struct Member {
@@ -60,7 +78,6 @@ contract LoyaltyProgram {
 
         //add partners info to be shared with members
         partnersInfo.push(Partner(msg.sender, _name, true));
-
     }
 
     //update member with points earned
@@ -115,6 +132,20 @@ contract LoyaltyProgram {
     //get length of partnersInfo array
     function partnersInfoLength() public view returns(uint256) {
         return partnersInfo.length;
+    }
+
+    // get partner index of partnersInfo array
+    function getPartnerAt(uint _index) public view returns(string memory) {
+        return partnersInfo[_index].name;
+    }
+
+    // get member at msg.sender of members
+    function getMemberAt() public view onlyOwner returns (string memory, string memory, uint) {
+        string memory name = members[msg.sender].fullName;
+        string memory phone = members[msg.sender].phone;
+        uint points = members[msg.sender].points;
+
+        return (name, phone, points);
     }
 
 }

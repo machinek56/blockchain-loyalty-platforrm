@@ -412,23 +412,9 @@ export const TOKEN  =  {
   ]
 }
 
-export const USER = {
-  ADDRESS: '0x3a80CC82f7DB9552A2C0Ec4cf10c2C9f44B95BD8',
+export const LOYALTY_PROGRAM = {
+  ADDRESS: '0xF7cae72e34e81390073f98E436BdC1111096DBd6',
   ABI: [
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "userCount",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
     {
       "constant": true,
       "inputs": [
@@ -437,15 +423,11 @@ export const USER = {
           "type": "address"
         }
       ],
-      "name": "users",
+      "name": "members",
       "outputs": [
         {
-          "name": "accountId",
-          "type": "uint256"
-        },
-        {
-          "name": "userType",
-          "type": "string"
+          "name": "memberAddress",
+          "type": "address"
         },
         {
           "name": "fullName",
@@ -456,7 +438,42 @@ export const USER = {
           "type": "string"
         },
         {
-          "name": "wallet",
+          "name": "points",
+          "type": "uint256"
+        },
+        {
+          "name": "isRegistered",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "transactionsInfo",
+      "outputs": [
+        {
+          "name": "points",
+          "type": "uint256"
+        },
+        {
+          "name": "transactionType",
+          "type": "uint8"
+        },
+        {
+          "name": "memberAddress",
+          "type": "address"
+        },
+        {
+          "name": "partnerAddress",
           "type": "address"
         }
       ],
@@ -465,33 +482,80 @@ export const USER = {
       "type": "function"
     },
     {
-      "anonymous": false,
+      "constant": true,
       "inputs": [
         {
-          "indexed": false,
-          "name": "accountId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "name": "fullName",
-          "type": "string"
+          "name": "",
+          "type": "address"
         }
       ],
-      "name": "UserCreated",
-      "type": "event"
+      "name": "partners",
+      "outputs": [
+        {
+          "name": "partnerAddress",
+          "type": "address"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "isRegistered",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "partnersInfo",
+      "outputs": [
+        {
+          "name": "partnerAddress",
+          "type": "address"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "isRegistered",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
     },
     {
       "constant": false,
       "inputs": [
         {
-          "name": "_addr",
+          "name": "newOwner",
           "type": "address"
         },
         {
-          "name": "_userType",
+          "name": "_phone",
           "type": "string"
-        },
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
         {
           "name": "_fullName",
           "type": "string"
@@ -501,13 +565,8 @@ export const USER = {
           "type": "string"
         }
       ],
-      "name": "registerUser",
-      "outputs": [
-        {
-          "name": "success",
-          "type": "bool"
-        }
-      ],
+      "name": "registerMember",
+      "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -516,28 +575,407 @@ export const USER = {
       "constant": false,
       "inputs": [
         {
-          "name": "_addr",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "name": "_partnerAddress",
           "type": "address"
         }
       ],
-      "name": "getUser",
+      "name": "registerPartner",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_points",
+          "type": "uint256"
+        },
+        {
+          "name": "_partnerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "earnPoints",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_points",
+          "type": "uint256"
+        },
+        {
+          "name": "_partnerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "usePoints",
       "outputs": [
         {
-          "name": "phone",
-          "type": "string"
-        },
-        {
-          "name": "fullName",
-          "type": "string"
-        },
-        {
-          "name": "userType",
-          "type": "string"
+          "name": "",
+          "type": "uint256"
         }
       ],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "transactionsInfoLength",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "partnersInfoLength",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getPartnerAt",
+      "outputs": [
+        {
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getMemberAt",
+      "outputs": [
+        {
+          "name": "",
+          "type": "string"
+        },
+        {
+          "name": "",
+          "type": "string"
+        },
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
     }
   ]
 }
+
+export const ERC20_ABI = [
+  {
+    constant: true,
+    inputs: [],
+    name: 'name',
+    outputs: [
+      {
+        name: '',
+        type: 'string',
+      },
+    ],
+    payable: false,
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        name: '_spender',
+        type: 'address',
+      },
+      {
+        name: '_value',
+        type: 'uint256',
+      },
+    ],
+    name: 'approve',
+    outputs: [
+      {
+        name: 'success',
+        type: 'bool',
+      },
+    ],
+    payable: false,
+    type: 'function',
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: 'totalSupply',
+    outputs: [
+      {
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    payable: false,
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        name: '_from',
+        type: 'address',
+      },
+      {
+        name: '_to',
+        type: 'address',
+      },
+      {
+        name: '_value',
+        type: 'uint256',
+      },
+    ],
+    name: 'transferFrom',
+    outputs: [
+      {
+        name: 'success',
+        type: 'bool',
+      },
+    ],
+    payable: false,
+    type: 'function',
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: 'decimals',
+    outputs: [
+      {
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    payable: false,
+    type: 'function',
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: 'version',
+    outputs: [
+      {
+        name: '',
+        type: 'string',
+      },
+    ],
+    payable: false,
+    type: 'function',
+  },
+  {
+    constant: true,
+    inputs: [
+      {
+        name: '_owner',
+        type: 'address',
+      },
+    ],
+    name: 'balanceOf',
+    outputs: [
+      {
+        name: 'balance',
+        type: 'uint256',
+      },
+    ],
+    payable: false,
+    type: 'function',
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: 'symbol',
+    outputs: [
+      {
+        name: '',
+        type: 'string',
+      },
+    ],
+    payable: false,
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        name: '_to',
+        type: 'address',
+      },
+      {
+        name: '_value',
+        type: 'uint256',
+      },
+    ],
+    name: 'transfer',
+    outputs: [
+      {
+        name: 'success',
+        type: 'bool',
+      },
+    ],
+    payable: false,
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        name: '_spender',
+        type: 'address',
+      },
+      {
+        name: '_value',
+        type: 'uint256',
+      },
+      {
+        name: '_extraData',
+        type: 'bytes',
+      },
+    ],
+    name: 'approveAndCall',
+    outputs: [
+      {
+        name: 'success',
+        type: 'bool',
+      },
+    ],
+    payable: false,
+    type: 'function',
+  },
+  {
+    constant: true,
+    inputs: [
+      {
+        name: '_owner',
+        type: 'address',
+      },
+      {
+        name: '_spender',
+        type: 'address',
+      },
+    ],
+    name: 'allowance',
+    outputs: [
+      {
+        name: 'remaining',
+        type: 'uint256',
+      },
+    ],
+    payable: false,
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        name: '_initialAmount',
+        type: 'uint256',
+      },
+      {
+        name: '_tokenName',
+        type: 'string',
+      },
+      {
+        name: '_decimalUnits',
+        type: 'uint8',
+      },
+      {
+        name: '_tokenSymbol',
+        type: 'string',
+      },
+    ],
+    type: 'constructor',
+  },
+  {
+    payable: false,
+    type: 'fallback',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        name: '_from',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        name: '_to',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        name: '_value',
+        type: 'uint256',
+      },
+    ],
+    name: 'Transfer',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        name: '_owner',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        name: '_spender',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        name: '_value',
+        type: 'uint256',
+      },
+    ],
+    name: 'Approval',
+    type: 'event',
+  },
+]

@@ -18,16 +18,23 @@
                     </div>
 
                     <div class="mb-2">
-                        <strong>Токен:</strong>
+                        <strong>Токен: {{tokenSymbol}}</strong>
+                    </div>
+
+                    <div v-if="!isPartner" class="mb-2">
+                        <strong>{{user.name}}</strong>
+                        <p>{{user.phone}}</p>
+                        <p><b>Баллы:</b> {{user.points}}</p>
                     </div>
 
                 </b-card-text>
 
-                <b-button @click="showTransactions = !showTransactions"
+                <b-button v-if="!isPartner"
+                        @click="showTransactions = !showTransactions"
                         href="#">Показать транзакции</b-button>
             </b-card>
 
-            <b-tabs content-class="mt-3">
+            <b-tabs content-class="mt-3" >
                 <b-tab title="Перевести средства" active>
                     <div class="wallet-send">
                         <h2>Перевести средства</h2>
@@ -55,122 +62,67 @@
 
                 </b-tab>
 
-                <b-tab title="Заработать токены">
+                <b-tab title="Заработать токены" v-if="!isPartner">
                     <div class="wallet-send">
                         <h4>Заработать токены через покупки</h4>
 
                         <b-form-group label="Выберите партнера">
-                            <b-form-select v-model="partner" :options="tokens"></b-form-select>
+                            <b-form-select v-model="selectedPartner" :options="partners"></b-form-select>
                         </b-form-group>
 
                         <h5>Выберите товар</h5>
                         <div class="mb-2">
-                            <b-button variant="outline-secondary">Купить товар №1 и получить 10 токенов</b-button>
+                            <b-button variant="outline-secondary"
+                                      @click="buyProduct('10')">Купить товар №1 и получить 10 баллов</b-button>
                         </div>
 
                         <div class="mb-2">
-                            <b-button variant="outline-secondary">Купить товар №2 и получить 50 токенов</b-button>
+                            <b-button variant="outline-secondary"
+                                      @click="buyProduct('50')">Купить товар №2 и получить 50 баллов</b-button>
                         </div>
 
                         <div class="mb-2">
-                            <b-button variant="outline-secondary">Купить товар №3 и получить 100 токенов</b-button>
+                            <b-button variant="outline-secondary"
+                                      @click="buyProduct('100')">Купить товар №3 и получить 100 баллов</b-button>
                         </div>
                     </div>
                 </b-tab>
 
-                <b-tab title="Потратить токены">
+                <b-tab title="Потратить токены" v-if="!isPartner">
                     <div class="wallet-send">
                         <h4>Потратить токены через покупки</h4>
 
                         <b-form-group label="Выберите партнера">
-                            <b-form-select v-model="partner" :options="tokens"></b-form-select>
+                            <b-form-select v-model="selectedPartner" :options="partners"></b-form-select>
                         </b-form-group>
 
                         <h5>Выберите товар</h5>
                         <div class="mb-2">
-                            <b-button variant="outline-secondary">Купить товар №1 за 10 токенов</b-button>
+                            <b-button variant="outline-secondary"
+                                      @click="buyProductForToken('10')">Купить товар №1 за 10 баллов</b-button>
                         </div>
 
                         <div class="mb-2">
-                            <b-button variant="outline-secondary">Купить товар №2 за 50 токенов</b-button>
+                            <b-button variant="outline-secondary"
+                                      @click="buyProductForToken('50')">Купить товар №2 за 50 баллов</b-button>
                         </div>
 
                         <div class="mb-2">
-                            <b-button variant="outline-secondary">Купить товар №3 за 100 токенов</b-button>
+                            <b-button variant="outline-secondary"
+                                      @click="buyProductForToken('100')">Купить товар №3 за 100 баллов</b-button>
                         </div>
                     </div>
                 </b-tab>
 
-                <b-tab title="Создать токен">
-                    <div class="token-create" >
-                        <h2>Создать токен</h2>
+                <b-tab title="Посмотреть транзакции" v-if="isPartner">
+                    <div style="max-width: 800px;">
+                        <h2>Транзакции</h2>
 
-                        <b-form-group
-                                label="Название токена"
-                                label-for="input-1">
-                            <b-form-input id="input-0"
-                                          v-model="token.name"
-                                          trim>
-                            </b-form-input>
-                        </b-form-group>
-
-                        <b-form-group
-                                label="Символ токена"
-                                label-for="input-1">
-                            <b-form-input id="input-2"
-                                          max-length="4"
-                                          v-model="token.symbol"
-                                          trim>
-                            </b-form-input>
-                        </b-form-group>
-
-                        <b-form-group
-                                label="Decimals (кол-во знаков после запятой)"
-                                label-for="input-1">
-                            <b-form-input id="input-3"
-                                          v-model="token.decimals"
-                                          type="number"
-                                          trim>
-                            </b-form-input>
-                        </b-form-group>
-
-                        <b-form-group
-                                label="Общее количество токенов"
-                                label-for="input-1">
-                            <b-form-input id="input-4"
-                                          v-model="token.totalSupply"
-                                          type="tel"
-                                          trim>
-                            </b-form-input>
-                        </b-form-group>
-
-                        <b-button @click="createToken">Создать</b-button>
+                        <b-table striped hover small responsive :items="transactions"></b-table>
                     </div>
 
                 </b-tab>
-                <b-tab title="Взаимодействие с контрактом">
-                    <div class="contract-play">
-                        <h2>Взаимодействие с контрактом</h2>
 
-                        <b-form-group label="Адрес контракта">
-                            <b-form-input id="12"
-                                          v-model="contract.address"
-                                          trim>
-                            </b-form-input>
-                        </b-form-group>
-
-                        <b-form-group label="ABI/JSON контракта">
-                            <b-form-textarea rows="4"
-                                             v-model="contract.abi"
-                                             trim>
-                            </b-form-textarea>
-                        </b-form-group>
-
-                        <b-button @click.prevent="">
-                            Продолжить
-                        </b-button>
-                    </div>
-                </b-tab>
             </b-tabs>
 
         </div>
@@ -183,17 +135,17 @@
 
 <script>
   import web3 from '../web3'
-  import { mapState, mapActions } from 'vuex'
+  import { mapState, mapActions, mapGetters } from 'vuex'
   import { TOKEN } from '@/config'
 
   export default {
-    name: 'Wallet',
+    name: 'Account',
 
     data: () => ({
       address: '',
       balance: '',
-      selectedToken: 'TKN',
-      tokens: ['TKN'],
+      selectedToken: '',
+      tokens: ['ETH'],
       addressTo: '',
       amount: '',
       isLoading: false,
@@ -201,37 +153,39 @@
       token: {
         name: '',
         symbol: '',
-        decimals: '',
-        totalSupply: ''
+        decimals: ''
       },
       tokenName: '',
-      tokenSymbol: '',
+      tokenSymbol: 'ETH',
       transactions: [],
       contract: {},
-      partner: ['Test partner']
+      partners: [],
+      selectedPartner: null
     }),
 
     computed: {
-      ...mapState(['user'])
+      ...mapState(['user']),
+      ...mapGetters(['userType']),
+
+      isPartner () {
+        return this.userType === 'PARTNER'
+      }
     },
+
     methods: {
-      ...mapActions(['sendTransaction', 'getUser']),
+      ...mapActions(['sendTransaction', 'getClientInfo', 'getPartnerList', 'earnPoints', 'usePoints']),
 
       async getBalance() {
        let balance = await web3.eth.getBalance(this.address);
-       this.balance = web3.utils.fromWei(balance)
+       this.balance = await web3.utils.fromWei(balance)
       },
 
       async getToken() {
-        let contract = new web3.eth.Contract(TOKEN.ABI, TOKEN.ADDRESS)
-        const res = await contract.methods.mint('0x333dcd15AbD50180C56a618Ac240250bB4a2eDA8', 10000).call()
-        console.log(res)
-        this.tokenName = await contract.methods.name().call()
-        this.tokenSymbol = await contract.methods.name().call()
-      },
-
-      async createToken() {
-
+        // let contract = new web3.eth.Contract(TOKEN.ABI, TOKEN.ADDRESS)
+        // const res = await contract.methods.mint('0x333dcd15AbD50180C56a618Ac240250bB4a2eDA8', 10000).call()
+        // console.log(res)
+        // this.tokenName = await contract.methods.name().call()
+        // this.tokenSymbol = await contract.methods.name().call()
       },
 
       async handleSendTransaction() {
@@ -244,10 +198,12 @@
 
         await this.sendTransaction(transaction)
 
-        this.addressTo = ''
-        this.amount = ''
         this.isLoading = false
         this.getBalance()
+      },
+
+      async getPartners() {
+        this.partners = await this.getPartnerList()
       },
 
       getTransactions() {
@@ -269,6 +225,22 @@
           }
         });
       },
+
+      async buyProduct(points) {
+        const data = {
+          points,
+          partnerAddress: this.selectedPartner
+        }
+        await this.earnPoints(data)
+      },
+
+      async buyProductForToken(points) {
+        const data = {
+          points,
+          partnerAddress: this.selectedPartner
+        }
+        await this.usePoints(data)
+      }
     },
 
     mounted () {
@@ -276,13 +248,16 @@
       this.getBalance()
       this.getToken()
       this.getTransactions()
-      this.getUser(this.address)
+      this.getPartners()
+      if (!this.isPartner) {
+        this.getClientInfo()
+      }
     }
   }
 </script>
 
 <style scoped>
-    .wallet-send, .token-create {
+    .wallet-send {
         max-width: 400px;
         width: 100%;
     }
