@@ -1,5 +1,5 @@
 export const TOKEN  =  {
-  ADDRESS: '0x3BC49B8682b87042eD31d85733d523EADC763394',
+  ADDRESS: '0x796591d56724CAe2a34A69079F185c9803fdEca4',
   ABI: [
     {
       "constant": true,
@@ -355,7 +355,7 @@ export const TOKEN  =  {
 }
 
 export const LOYALTY_PROGRAM = {
-  ADDRESS: '0xd94ae1a70c1c908B416C442EF3e08cB4CB7231b2',
+  ADDRESS: '0x8A45Fc17caeB29bbbd96876211F9A0f1503AEcdC',
   ABI: [
     {
       "constant": true,
@@ -592,21 +592,12 @@ export const LOYALTY_PROGRAM = {
     },
     {
       "constant": true,
-      "inputs": [
-        {
-          "name": "_index",
-          "type": "uint256"
-        }
-      ],
+      "inputs": [],
       "name": "partnersInfoLength",
       "outputs": [
         {
           "name": "",
           "type": "uint256"
-        },
-        {
-          "name": "",
-          "type": "address"
         }
       ],
       "payable": false,
@@ -630,10 +621,6 @@ export const LOYALTY_PROGRAM = {
         {
           "name": "",
           "type": "address"
-        },
-        {
-          "name": "",
-          "type": "uint256"
         }
       ],
       "payable": false,

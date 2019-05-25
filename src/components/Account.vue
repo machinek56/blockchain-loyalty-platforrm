@@ -1,43 +1,13 @@
 <template>
     <div class="container">
         <div class="mt-4 d-flex">
-            <b-card
-                title="Аккаунт"
-                tag="article"
-                style="max-width: 20rem;"
-                class="mb-2 mr-lg-5"
-            >
-                <b-card-text>
-                    <div class="mb-2">
-                        <strong>Адрес кошелька:</strong> {{address}}
-                    </div>
-
-                    <div class="mb-2">
-                        <strong>Баланс:</strong>
-                        {{balance}}
-                    </div>
-
-                    <div class="mb-2">
-                        <strong>Токен: {{tokenSymbol}}</strong>
-                    </div>
-
-                    <div v-if="!isPartner" class="mb-2">
-                        <strong>{{user.name}}</strong>
-                        <p>{{user.phone}}</p>
-                        <p><b>Баллы:</b> {{user.points}}</p>
-                    </div>
-
-                </b-card-text>
-
-                <b-button v-if="!isPartner"
-                        @click="showTransactions = !showTransactions"
-                        href="#">Показать транзакции</b-button>
-            </b-card>
+           <account-info
+                   :is-partner="isPartner">
+           </account-info>
 
             <b-tabs content-class="mt-3" >
                 <b-tab title="Перевести средства" active>
-                    <transfer-funds :address="address"></transfer-funds>
-
+                    <transfer-funds></transfer-funds>
                 </b-tab>
 
                 <b-tab title="Заработать баллы" v-if="!isPartner">
@@ -99,6 +69,29 @@
                     </div>
                 </b-tab>
 
+                <b-tab title="Показать транзакции" v-if="!isPartner">
+                    <div style="max-width: 800px;">
+                        <h2>Транзакции</h2>
+
+                        <table class="table table-hover" v-if="transactions.length">
+                            <thead>
+                                <th>Hash</th>
+                                <th>Gas used</th>
+                                <th>From</th>
+                                <th>To</th>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(transaction, key) in transactions" :key="key">
+                                    <td :title="transaction.hash">{{ truncateString(transaction.hash) }}</td>
+                                    <td>{{ transaction.gasUsed }}</td>
+                                    <td :title="transaction.from">{{ truncateString(transaction.from) }}</td>
+                                    <td :title="transaction.to">{{ truncateString(transaction.to) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </b-tab>
+
                 <b-tab title="Посмотреть транзакции" v-if="isPartner">
                     <div style="max-width: 800px;">
                         <h2>Транзакции</h2>
@@ -111,49 +104,39 @@
                                 <th>Адрес партнера</th>
                             </thead>
                             <tbody>
-                                <tr v-for="(transaction, key) in transactions" :key="key">
+                                <tr v-for="(transaction, key) in contractTransactions" :key="key">
                                     <td>{{ transaction.points }}</td>
-                                    <td>{{ transaction.trasactionType }}</td>
-                                    <td>{{ transaction.memberAddress }}</td>
-                                    <td>{{ transaction.partnerAddress }}</td>
+                                    <td>{{ transaction.transactionType }}</td>
+                                    <td :title="transaction.memberAddress">{{ truncateString(transaction.memberAddress) }}</td>
+                                    <td :title="transaction.partnerAddress">{{ truncateString(transaction.partnerAddress) }}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
                 </b-tab>
-
             </b-tabs>
 
         </div>
-
-        <b-table v-show="showTransactions"
-                striped hover small responsive :items="transactions"></b-table>
-
     </div>
 </template>
 
 <script>
   import web3 from '../web3'
   import { mapActions, mapGetters, mapState } from 'vuex'
-  import { TOKEN } from '@/config'
   import TransferFunds from './TransferFunds'
+  import AccountInfo from './AccountInfo'
   import { userType } from '@/constants'
 
   export default {
     name: 'Account',
 
     components: {
-      TransferFunds
+      TransferFunds,
+      AccountInfo
     },
 
     data: () => ({
-      address: '',
-      balance: '',
-      isLoading: false,
-      showTransactions: false,
-      tokenName: '',
-      tokenSymbol: 'ETH',
       transactions: [],
       contractTransactions: [],
       partners: [],
@@ -161,8 +144,8 @@
     }),
 
     computed: {
-      ...mapState(['user']),
       ...mapGetters(['userType']),
+      ...mapState(['address']),
 
       isPartner () {
         return this.userType === userType.PARTNER
@@ -170,21 +153,7 @@
     },
 
     methods: {
-      ...mapActions(['sendTransaction', 'getClientInfo', 'getPartnerList',
-        'earnPoints', 'usePoints', 'getTransactionsInfo']),
-
-      async getBalance() {
-       let balance = await web3.eth.getBalance(this.address);
-       this.balance = await web3.utils.fromWei(balance)
-      },
-
-      async getToken() {
-        let contract = new web3.eth.Contract(TOKEN.ABI, TOKEN.ADDRESS)
-        const res = await contract.methods.mint(this.address, 10000).call()
-        console.log(res)
-        this.tokenName = await contract.methods.name().call()
-        this.tokenSymbol = await contract.methods.symbol().call()
-      },
+      ...mapActions(['sendTransaction', 'getPartnerList', 'earnPoints', 'usePoints', 'getTransactionsInfo']),
 
       async getPartners() {
         const partners = await this.getPartnerList()
@@ -234,17 +203,26 @@
       },
 
       async getTransactionInfo() {
-        this.contractTransactions = await this.getTransactionsInfo()
+        const transactions = await this.getTransactionsInfo()
+        this.contractTransactions = transactions.map(item => {
+            return {
+              points: item[0].toNumber(),
+              transactionType: item[1] === 0 ? 'Начисление' : 'Погашение',
+              memberAddress: item[2],
+              partnerAddress: item[3]
+            }
+        }).filter(item => item.partnerAddress === this.address)
+      },
+
+      truncateString(str, length = 15) {
+        if (!str) return
+        return str.substring(0, length) + '...'
       }
     },
 
     mounted () {
-      this.address = sessionStorage.getItem('account')
-      this.getBalance()
-      this.getToken()
       this.getPartners()
       if (!this.isPartner) {
-        this.getClientInfo()
         this.getTransactions()
       } else {
         this.getTransactionInfo()

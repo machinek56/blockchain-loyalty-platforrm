@@ -111,6 +111,7 @@ contract LoyaltyProgram {
         return transactionsInfo.length;
     }
 
+    // get transaction by index of transactionsInfo array
     function getTransactionAt(uint _index) public view returns (uint, TransactionType, address, address) {
         return (
             transactionsInfo[_index].points,

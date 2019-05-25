@@ -25,6 +25,7 @@
   import LoginPartnerModal from './modal/LoginPartnerModal'
   import LoginClientModal from './modal/LoginClientModal'
   import web3 from '../web3'
+  import { mapMutations } from 'vuex'
 
   export default {
     name: 'Login',
@@ -39,13 +40,16 @@
     },
 
     methods: {
+      ...mapMutations(['setAddress']),
+
       async getAccount () {
         const accounts = await web3.eth.getAccounts();
         this.account = accounts[0]
         if (!accounts[0]) {
           alert('Войдите в аккаунт MetaMask!')
+        } else {
+          this.setAddress(this.account)
         }
-        sessionStorage.setItem('account', this.account)
       }
     },
 

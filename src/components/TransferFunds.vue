@@ -26,17 +26,10 @@
 
 <script>
   import web3 from '../web3'
-  import { mapActions } from 'vuex'
+  import { mapActions, mapState } from 'vuex'
 
   export default {
     name: 'TransferFunds',
-
-    props: {
-      address: {
-        type: String,
-        required: true
-      }
-    },
 
     data: () => ({
       selectedToken: '',
@@ -45,6 +38,10 @@
       tokens: ['ETH'],
       isLoading: false
     }),
+
+    computed: {
+        ...mapState(['address'])
+    },
 
     methods: {
       ...mapActions(['sendTransaction']),

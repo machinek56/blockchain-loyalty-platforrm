@@ -12,7 +12,8 @@ const store = new Vuex.Store({
 
   state: {
     user: {},
-    userType: {}
+    userType: {},
+    address: ''
   },
 
   mutations: {
@@ -24,7 +25,9 @@ const store = new Vuex.Store({
       }
     },
 
-    setUserType: (state, payload) => state.userType = payload
+    setUserType: (state, payload) => state.userType = payload,
+
+    setAddress: (state, payload) => state.address = payload
   },
 
   getters: {
@@ -33,22 +36,22 @@ const store = new Vuex.Store({
 
   actions: {
     async sendTransaction(context, data) {
-      await web3.eth.sendTransaction(data)
+      return await web3.eth.sendTransaction(data)
     },
 
-    async registerUser(context, { fullName, phone }) {
+    async registerUser({ state }, { fullName, phone }) {
       const contract = new web3.eth.Contract(LOYALTY_PROGRAM.ABI, LOYALTY_PROGRAM.ADDRESS)
       const res = await contract.methods.registerMember(
         fullName,
         phone
-      ).send({ from: sessionStorage.getItem('account')})
+      ).send({ from: state.address })
       console.log(res)
       return res
     },
 
-    async registerPartner(context, data) {
+    async registerPartner({ state }, data) {
       const contract = new web3.eth.Contract(LOYALTY_PROGRAM.ABI, LOYALTY_PROGRAM.ADDRESS)
-      const res = await contract.methods.registerPartner(data).send({ from: sessionStorage.getItem('account')})
+      const res = await contract.methods.registerPartner(data).send({ from: state.address })
       console.log(res)
       return res
     },
@@ -65,25 +68,25 @@ const store = new Vuex.Store({
       return partnersData
     },
 
-    async getClientInfo({ commit }) {
+    async getClientInfo({ commit, state }) {
       const contract = new web3.eth.Contract(LOYALTY_PROGRAM.ABI, LOYALTY_PROGRAM.ADDRESS)
       const user = await contract.methods.getMemberAt().call({
-        from: sessionStorage.getItem('account')
+        from: state.address
       })
       commit('setUser', user)
     },
 
-    async earnPoints(context, data) {
+    async earnPoints({ state }, data) {
       const contract = new web3.eth.Contract(LOYALTY_PROGRAM.ABI, LOYALTY_PROGRAM.ADDRESS)
       const res = await contract.methods.earnPoints(data.points, data.partnerAddress)
-        .send({from: sessionStorage.getItem('account')})
+        .send({from: state.address })
       return res
     },
 
-    async usePoints(context, data) {
+    async usePoints({ state }, data) {
       const contract = new web3.eth.Contract(LOYALTY_PROGRAM.ABI, LOYALTY_PROGRAM.ADDRESS)
       const res = await contract.methods.usePoints(data.points, data.partnerAddress)
-        .send({from: sessionStorage.getItem('account')})
+        .send({from: state.address })
       return res
     },
 
