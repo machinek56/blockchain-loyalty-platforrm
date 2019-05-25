@@ -11,62 +11,15 @@
                 </b-tab>
 
                 <b-tab title="Заработать баллы" v-if="!isPartner">
-                    <div class="wallet-send">
-                        <h4>Заработать баллы через покупки</h4>
-
-                        <b-form-group label="Выберите партнера">
-                            <b-form-select v-model="selectedPartner"
-                                           :options="partners"
-                                           text-field="name"
-                                           value-field="address">
-                            </b-form-select>
-                        </b-form-group>
-
-                        <h5>Выберите товар</h5>
-                        <div class="mb-2">
-                            <b-button variant="outline-secondary"
-                                      @click="buyProduct('10')">Купить товар №1 и получить 10 баллов</b-button>
-                        </div>
-
-                        <div class="mb-2">
-                            <b-button variant="outline-secondary"
-                                      @click="buyProduct('50')">Купить товар №2 и получить 50 баллов</b-button>
-                        </div>
-
-                        <div class="mb-2">
-                            <b-button variant="outline-secondary"
-                                      @click="buyProduct('100')">Купить товар №3 и получить 100 баллов</b-button>
-                        </div>
-                    </div>
+                    <earn-points
+                        :partners="partners">
+                    </earn-points>
                 </b-tab>
 
                 <b-tab title="Потратить баллы" v-if="!isPartner">
-                    <div class="wallet-send">
-                        <h4>Потратить баллы через покупки</h4>
-
-                        <b-form-group label="Выберите партнера">
-                            <b-form-select v-model="selectedPartner"
-                                           :options="partners"
-                                           text-field="name"
-                                           value-field="address">
-                            </b-form-select>
-                        </b-form-group>
-                        <h5>Выберите товар</h5>
-                        <div class="mb-2">
-                            <b-button variant="outline-secondary"
-                                      @click="buyProductForToken('10')">Купить товар №1 за 10 баллов</b-button>
-                        </div>
-
-                        <div class="mb-2">
-                            <b-button variant="outline-secondary"
-                                      @click="buyProductForToken('50')">Купить товар №2 за 50 баллов</b-button>
-                        </div>
-
-                        <div class="mb-2">
-                            <b-button variant="outline-secondary"
-                                      @click="buyProductForToken('100')">Купить товар №3 за 100 баллов</b-button>
-                        </div>
-                    </div>
+                    <use-points
+                         :partners="partners">
+                    </use-points>
                 </b-tab>
 
                 <b-tab title="Показать транзакции" v-if="!isPartner">
@@ -113,7 +66,6 @@
                             </tbody>
                         </table>
                     </div>
-
                 </b-tab>
             </b-tabs>
 
@@ -126,6 +78,8 @@
   import { mapActions, mapGetters, mapState } from 'vuex'
   import TransferFunds from './TransferFunds'
   import AccountInfo from './AccountInfo'
+  import EarnPoints from './EarnPoints'
+  import UsePoints from './UsePoints'
   import { userType } from '@/constants'
 
   export default {
@@ -133,7 +87,9 @@
 
     components: {
       TransferFunds,
-      AccountInfo
+      AccountInfo,
+      EarnPoints,
+      UsePoints
     },
 
     data: () => ({
@@ -153,7 +109,7 @@
     },
 
     methods: {
-      ...mapActions(['sendTransaction', 'getPartnerList', 'earnPoints', 'usePoints', 'getTransactionsInfo']),
+      ...mapActions(['getPartnerList', 'getTransactionsInfo']),
 
       async getPartners() {
         const partners = await this.getPartnerList()
@@ -183,23 +139,6 @@
             })
           }
         });
-      },
-
-      async buyProduct(points) {
-        const data = {
-          points,
-          partnerAddress: this.selectedPartner
-        }
-        await this.earnPoints(data)
-        await this.getClientInfo()
-      },
-
-      async buyProductForToken(points) {
-        const data = {
-          points,
-          partnerAddress: this.selectedPartner
-        }
-        await this.usePoints(data)
       },
 
       async getTransactionInfo() {

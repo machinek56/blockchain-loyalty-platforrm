@@ -45,6 +45,12 @@
       async getAccount () {
         const accounts = await web3.eth.getAccounts();
         this.account = accounts[0]
+
+        if (!ethereum.isMetaMask) {
+          alert('Для работы с приложением нужно установить MetaMask!')
+          return
+        }
+
         if (!accounts[0]) {
           alert('Войдите в аккаунт MetaMask!')
         } else {

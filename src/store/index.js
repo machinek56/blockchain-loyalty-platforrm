@@ -4,7 +4,6 @@ import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 import web3 from '../web3'
-
 import { LOYALTY_PROGRAM } from '@/config'
 
 const store = new Vuex.Store({
