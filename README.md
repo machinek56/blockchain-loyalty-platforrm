@@ -1,4 +1,4 @@
-# loyality-platform
+# loyalty-platform
 
 ## Project setup
 ```
