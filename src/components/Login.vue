@@ -47,12 +47,20 @@
         this.account = accounts[0]
 
         if (!ethereum.isMetaMask) {
-          alert('Для работы с приложением нужно установить MetaMask!')
+          this.$bvToast.toast('', {
+            title: 'Для работы с приложением нужно установить MetaMask!',
+            variant: 'warning',
+            solid: true
+          })
           return
         }
 
         if (!accounts[0]) {
-          alert('Войдите в аккаунт MetaMask!')
+          this.$bvToast.toast('', {
+            title: 'Войдите в аккаунт MetaMask!',
+            variant: 'warning',
+            solid: true
+          })
         } else {
           this.setAddress(this.account)
         }

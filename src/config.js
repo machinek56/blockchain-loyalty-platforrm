@@ -1,5 +1,5 @@
 export const TOKEN  =  {
-  ADDRESS: '0x796591d56724CAe2a34A69079F185c9803fdEca4',
+  ADDRESS: '0x62C430020cDfb9F73348bAba35cA1DeD29087D60',
   ABI: [
     {
       "constant": true,
@@ -355,7 +355,7 @@ export const TOKEN  =  {
 }
 
 export const LOYALTY_PROGRAM = {
-  ADDRESS: '0x8A45Fc17caeB29bbbd96876211F9A0f1503AEcdC',
+  ADDRESS: '0x6798bB74d249E4727fCF0202Ac518c7A5334C9C4',
   ABI: [
     {
       "constant": true,
